@@ -1,2 +1,2 @@
-# Mieka-ChatBot-Plugin-Template
-a Template repo for Mieka-ChatBot-Plugin
+# Pic-Eval
+a chatbot plugin that allows sending picture and store according the score marked by users

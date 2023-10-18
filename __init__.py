@@ -3,6 +3,7 @@ import pathlib
 import re
 from typing import List
 
+from modules.file_manager import get_pwd
 from modules.plugin_base import AbstractPlugin
 
 __all__ = ["PicEval"]
@@ -25,7 +26,21 @@ class PicEval(AbstractPlugin):
 
     CONFIG_MAX_BATCH_SIZE = "MaxBatchSize"
 
-    def _get_config_parent_dir(self) -> str:
+    DefaultConfig = {
+        CONFIG_PICTURE_ASSET_PATH: f"{get_pwd()}/asset",
+        CONFIG_RECYCLE_FOLDER: f"{get_pwd()}/recycled",
+        CONFIG_PICTURE_CACHE_DIR_PATH: f"{get_pwd()}/cache",
+        CONFIG_STORE_DIR_PATH: f"{get_pwd()}/store",
+        CONFIG_PICTURE_IGNORED_DIRS: [],
+        CONFIG_DETECTED_KEYWORD: "eval",
+        CONFIG_RAND_KEYWORD: "ej",
+        CONFIG_LEVEL_RESOLUTION: 10,
+        CONFIG_MAX_FILE_SIZE: 6 * 1024 * 1024,
+        CONFIG_MAX_BATCH_SIZE: 7,
+    }
+
+    @classmethod
+    def _get_config_dir(cls) -> str:
         return os.path.abspath(os.path.dirname(__file__))
 
     @classmethod
@@ -44,20 +59,6 @@ class PicEval(AbstractPlugin):
     def get_plugin_author(cls) -> str:
         return "whth"
 
-    def __register_all_config(self):
-        self._config_registry.register_config(self.CONFIG_PICTURE_ASSET_PATH, [])
-        self._config_registry.register_config(self.CONFIG_PICTURE_IGNORED_DIRS, [])
-        self._config_registry.register_config(self.CONFIG_DETECTED_KEYWORD, "eval")
-        self._config_registry.register_config(self.CONFIG_RAND_KEYWORD, "ej")
-        self._config_registry.register_config(self.CONFIG_STORE_DIR_PATH, f"{self._get_config_parent_dir()}/store")
-        self._config_registry.register_config(self.CONFIG_LEVEL_RESOLUTION, 10)
-        self._config_registry.register_config(
-            self.CONFIG_PICTURE_CACHE_DIR_PATH, f"{self._get_config_parent_dir()}/cache"
-        )
-        self._config_registry.register_config(self.CONFIG_RECYCLE_FOLDER, f"{self._get_config_parent_dir()}/recycled")
-        self._config_registry.register_config(self.CONFIG_MAX_FILE_SIZE, 6 * 1024 * 1024)
-        self._config_registry.register_config(self.CONFIG_MAX_BATCH_SIZE, 7)
-
     def install(self):
         from colorama import Fore
         from graia.ariadne.message.chain import MessageChain
@@ -72,11 +73,8 @@ class PicEval(AbstractPlugin):
         from .evaluate import Evaluate
         from .img_manager import ImageRegistry
 
-        self.__register_all_config()
-        self._config_registry.load_config()
-
         img_registry = ImageRegistry(
-            f"{self._get_config_parent_dir()}/images_registry.json",
+            f"{self._get_config_dir()}/images_registry.json",
             recycle_folder=self._config_registry.get_config(self.CONFIG_RECYCLE_FOLDER),
         )
         ignored: List[str] = self._config_registry.get_config(self.CONFIG_PICTURE_IGNORED_DIRS)

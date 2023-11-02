@@ -70,7 +70,7 @@ class PicEval(AbstractPlugin):
         from .img_manager import ImageRegistry
 
         img_registry = ImageRegistry(
-            f"{self._get_config_dir()}/images_registry.json",
+            f"{get_pwd()}/images_registry.json",
             recycle_folder=self._config_registry.get_config(self.CONFIG_RECYCLE_FOLDER),
         )
         ignored: List[str] = self._config_registry.get_config(self.CONFIG_PICTURE_IGNORED_DIRS)

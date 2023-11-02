@@ -9,6 +9,19 @@ from modules.plugin_base import AbstractPlugin
 __all__ = ["PicEval"]
 
 
+class Default:
+    asset = f"{get_pwd()}/asset"
+    recycle = f"{get_pwd()}/recycled"
+    cache = f"{get_pwd()}/cache"
+    store = f"{get_pwd()}/store"
+
+    @classmethod
+    def create_folders(cls):
+        default = [cls.asset, cls.recycle, cls.cache, cls.store]
+        for attr in default:
+            pathlib.Path(attr).mkdir(parents=True, exist_ok=True)
+
+
 class PicEval(AbstractPlugin):
     CONFIG_PICTURE_ASSET_PATH = "PictureAssetPath"
     CONFIG_PICTURE_IGNORED_DIRS = "PictureIgnored"
@@ -26,11 +39,12 @@ class PicEval(AbstractPlugin):
 
     CONFIG_MAX_BATCH_SIZE = "MaxBatchSize"
 
+    Default.create_folders()
     DefaultConfig = {
-        CONFIG_PICTURE_ASSET_PATH: f"{get_pwd()}/asset",
-        CONFIG_RECYCLE_FOLDER: f"{get_pwd()}/recycled",
-        CONFIG_PICTURE_CACHE_DIR_PATH: f"{get_pwd()}/cache",
-        CONFIG_STORE_DIR_PATH: f"{get_pwd()}/store",
+        CONFIG_PICTURE_ASSET_PATH: Default.asset,
+        CONFIG_RECYCLE_FOLDER: Default.recycle,
+        CONFIG_PICTURE_CACHE_DIR_PATH: Default.cache,
+        CONFIG_STORE_DIR_PATH: Default.store,
         CONFIG_PICTURE_IGNORED_DIRS: [],
         CONFIG_DETECTED_KEYWORD: "eval",
         CONFIG_RAND_KEYWORD: "ej",

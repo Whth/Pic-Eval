@@ -40,10 +40,6 @@ class PicEval(AbstractPlugin):
     }
 
     @classmethod
-    def _get_config_dir(cls) -> str:
-        return os.path.abspath(os.path.dirname(__file__))
-
-    @classmethod
     def get_plugin_name(cls) -> str:
         return "PicEval"
 

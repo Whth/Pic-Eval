@@ -197,7 +197,7 @@ class PicEval(AbstractPlugin):
 
                 output_path = f"{cache_dir_path}/{os.path.basename(picture)}"
                 quality = compress_image_max_vol(
-                    picture, output_path, self._config_registry.get_config(self.CONFIG_MAX_FILE_SIZE)
+                    picture, output_path, self._config_registry.get_config(self.CONFIG_MAX_FILE_SIZE), False
                 )
                 print(f"Compress to {quality}")
 
@@ -237,6 +237,7 @@ class PicEval(AbstractPlugin):
             input_image_path=choice(search_stack),
             output_image_path=out_path,
             max_file_size=6 * 1024 * 1024,
+            search_best=False,
             min_quality=quality,
         )
         return out_path

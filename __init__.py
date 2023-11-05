@@ -1,10 +1,17 @@
 import os
 import pathlib
 import re
+from random import choice
 from typing import List
 
-from modules.file_manager import get_pwd
-from modules.plugin_base import AbstractPlugin
+from modules.shared import (
+    get_pwd,
+    AbstractPlugin,
+    explore_folder,
+    download_file,
+    compress_image_max_vol,
+    generate_random_string,
+)
 
 __all__ = ["PicEval"]
 
@@ -78,7 +85,7 @@ class PicEval(AbstractPlugin):
         from graia.ariadne.util.cooldown import CoolDown
         from graia.ariadne.event.message import GroupMessage, ActiveGroupMessage, MessageEvent
         from graia.ariadne.exception import UnknownTarget
-        from modules.file_manager import download_file, compress_image_max_vol
+
         from .select import Selector
         from .evaluate import Evaluate
         from .img_manager import ImageRegistry
@@ -219,3 +226,17 @@ class PicEval(AbstractPlugin):
                 return
             success = img_registry.remove(event.quote.id, save=True)
             await app.send_group_message(group, f"Remove id-{event.quote.id}\nSuccess = {success}")
+
+    def rand_pic(self, quality: int = 50) -> str:
+        search_stack = []
+        for folder in self.config_registry.get_config(self.CONFIG_PICTURE_ASSET_PATH):
+            search_stack.extend(explore_folder(folder))
+        cache_dir = self.config_registry.get_config(self.CONFIG_PICTURE_CACHE_DIR_PATH)
+        out_path = f"{cache_dir}/{generate_random_string(10)}.png"
+        compress_image_max_vol(
+            input_image_path=choice(search_stack),
+            output_image_path=out_path,
+            max_file_size=6 * 1024 * 1024,
+            min_quality=quality,
+        )
+        return out_path
